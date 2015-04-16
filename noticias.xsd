@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="noticias">
+    <xsd:complexType>
+            <xsd:attribute name="id" type="xsd:string" use="required">
+              <xsd:annotation>
+                <xsd:documentation>
+                  Contenido del elemento guid del item
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:attribute>
+
+      <xsd:sequence>
+        <xsd:element name="artículo" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="título" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Contenido del elemento "title" del item
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="descripción" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Debe concatenarse, en este orden, el
+                    Contenido de "description" del item
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="fecha" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Contenido del elemento "pubDate" del item
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              
+              <xsd:element name="categoría" type="xsd:string"
+                           maxOccurs="unbounded">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Lista de códigos de categoría obtenidos
+                    De los elementos "category" del item,
+                    separados por espacios
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>                            
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+		</xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
