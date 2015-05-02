@@ -60,10 +60,7 @@ public class XMLNoticiasHandler extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (this.doRead) {
-			if (currentElement) {
 				currentValue = new String(ch, start, length);
-				currentElement = false;
-			}
 		}
 	}
 
@@ -83,6 +80,8 @@ public class XMLNoticiasHandler extends DefaultHandler {
 			} else if (localName.equalsIgnoreCase("description")) {
 				System.out.println("Description: " + currentValue +"\n");
 			}
+			
+			currentValue = "";
 		}
 
 	}
