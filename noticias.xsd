@@ -9,7 +9,8 @@
                 </xsd:documentation>
               </xsd:annotation>
             </xsd:attribute>
-
+            
+        
       <xsd:sequence>
         <xsd:element name="artículo" maxOccurs="unbounded">
           <xsd:complexType>
