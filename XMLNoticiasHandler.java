@@ -6,57 +6,107 @@ import java.util.List;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class XMLNoticiasHandler extends DefaultHandler {	
+public class XMLNoticiasHandler extends DefaultHandler {
 
-	private String result;
-	
+	boolean isStart = false;
+	boolean currentElement = false;
+	String currentValue = null;
+	private String result = "";
+
 	public XMLNoticiasHandler() {
 		this.result = "";
 	}
 
-	// Demás metodos del Parser SAX
-	
-    public void startElement(String espacioNombres, String nomLocal, String nomCompleto, Attributes atrs) {
-    	switch(nomCompleto){
-    		case "rss":
-    			this.result += "<rss>";
-    			break;
-    	}
-    	//System.out.println("Nombre local:" + nomLocal + " Nombre completo:" + nomCompleto );
-		
-		for ( int i = 0; i < atrs.getLength(); i++) {
-			//System.out.println("    ATRIB. Nombre local: " + atrs.getLocalName(i) );
-			//System.out.println("    ATRIB. Tipo:         " + atrs.getType(i) );
-			//System.out.println("    ATRIB. Valor:        " + atrs.getValue(i) );
-		}
-    }
-    public void endElement(String espacio, String nomLocal, String nomCompleto) {
-    	switch(nomCompleto){
-		case "rss":
-			this.result += "</rss>";
+	// Demï¿½s metodos del Parser SAX
+	private String parsearNombre(String fullName) {
+		String parsedName = "";
+		switch (fullName) {
+		case "item":
+			parsedName = "articulo";
 			break;
+		case "title":
+			parsedName = "titulo";
+			break;
+		case "description":
+			parsedName = "descripcion";
+			break;
+		case "category":
+			parsedName = "categoria";
+			break;
+		case "pubDate":
+			parsedName = "fecha";
+			break;
+		default:
+			parsedName = "";
 		}
-    }
-    public void characters_b(char[] ch, int inicio, int longitud) {
-		String cad = new String( ch, inicio, longitud);
-		System.out.println("    Caracteres: " + cad );
-		System.out.println("         Inicio:" + inicio + " Longitud:" + longitud );
-    }
+		return parsedName;
 
-    public void error(SAXParseException exc) throws SAXException {
-		mostrarError( exc, "Se encontró un error");
-    }
-    public void fatalError(SAXParseException exc) throws SAXException {
-		mostrarError( exc, "Se encontró un error fatal");
-    }
-    private void mostrarError( SAXParseException exc, String aviso )  throws SAXException {
-		System.out.println( aviso + ".  Línea:    " + exc.getLineNumber() );
-		System.out.println( "URI:     " + exc.getSystemId() );
-		System.out.println( "Mensaje: " + exc.getMessage() );
-		throw new SAXException(aviso);//
-    }
-    
+	}
+
+	public void startElement(String nameSpace, String localName,
+			String fullName, Attributes atrs) {
+
+		currentElement = true;
+
+		if (localName.equals("item")) {
+			/** Start */
+			this.isStart = true;
+			System.out.println();
+		}
+	}
+
+	@Override
+	public void characters(char[] ch, int start, int length)
+			throws SAXException {
+
+		if (currentElement) {
+			currentValue = new String(ch, start, length);
+			currentElement = false;
+		}
+
+	}
+
+	@Override
+	public void endElement(String uri, String localName, String qName)
+			throws SAXException {
+
+		if (this.isStart) {
+			currentElement = false;
+
+			/** set value */
+			if(localName.equalsIgnoreCase("item")){
+				this.isStart = false;
+			}else if (localName.equalsIgnoreCase("title")) {
+				System.out.println("title: "+currentValue);
+			} else if (localName.equalsIgnoreCase("link")) {
+				System.out.println("link: "+currentValue);
+			} else if (localName.equalsIgnoreCase("pubDate")) {
+				System.out.println("pubDate: "+currentValue);
+			} else if (localName.equalsIgnoreCase("description")) {
+				System.out.println("Description: "+currentValue);
+			}
+		}
+	}
+
+	@Override
+	public void error(SAXParseException exc) throws SAXException {
+		mostrarError(exc, "Se encontrï¿½ un error");
+	}
+
+	@Override
+	public void fatalError(SAXParseException exc) throws SAXException {
+		mostrarError(exc, "Se encontrï¿½ un error fatal");
+	}
+
+	private void mostrarError(SAXParseException exc, String warning)
+			throws SAXException {
+		System.out.println(warning + ".  Lï¿½nea:    " + exc.getLineNumber());
+		System.out.println("URI:     " + exc.getSystemId());
+		System.out.println("Mensaje: " + exc.getMessage());
+		throw new SAXException(warning);//
+	}
+
 	public String getResult() {
-	    return result.toString();
+		return result.toString();
 	}
 }
