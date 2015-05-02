@@ -11,6 +11,7 @@ public class XMLNoticiasHandler extends DefaultHandler {
 	boolean doRead = false;
 	boolean currentElement = false;
 	String currentValue = null;
+	private StringBuilder sb;
 	
 	//Not used yet
 	private String result = "";
@@ -53,14 +54,14 @@ public class XMLNoticiasHandler extends DefaultHandler {
 		}
 
 		currentElement = true;
-		/** Start */
+		this.sb = new StringBuilder();
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (this.doRead) {
-				currentValue = new String(ch, start, length);
+				sb.append(new String(ch, start, length));
 		}
 	}
 
@@ -72,16 +73,14 @@ public class XMLNoticiasHandler extends DefaultHandler {
 			currentElement = false;
 
 			if (localName.equalsIgnoreCase("title")) {
-				System.out.println("title: " + currentValue);
+				System.out.println("title: " + sb.toString());
 			} else if (localName.equalsIgnoreCase("link")) {
-				System.out.println("link: " + currentValue);
+				System.out.println("link: " + sb.toString());
 			} else if (localName.equalsIgnoreCase("pubDate")) {
-				System.out.println("pubDate: " + currentValue);
+				System.out.println("pubDate: " + sb.toString());
 			} else if (localName.equalsIgnoreCase("description")) {
-				System.out.println("Description: " + currentValue +"\n");
+				System.out.println("Description: " + sb.toString() +"\n");
 			}
-			
-			currentValue = "";
 		}
 
 	}
