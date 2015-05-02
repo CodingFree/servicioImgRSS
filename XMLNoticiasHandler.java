@@ -8,9 +8,11 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLNoticiasHandler extends DefaultHandler {
 
-	boolean isStart = false;
+	boolean doRead = false;
 	boolean currentElement = false;
 	String currentValue = null;
+	
+	//Not used yet
 	private String result = "";
 
 	public XMLNoticiasHandler() {
@@ -46,46 +48,43 @@ public class XMLNoticiasHandler extends DefaultHandler {
 	public void startElement(String nameSpace, String localName,
 			String fullName, Attributes atrs) {
 
-		currentElement = true;
-
-		if (localName.equals("item")) {
-			/** Start */
-			this.isStart = true;
-			System.out.println();
+		if (localName.equalsIgnoreCase("item")) {
+			this.doRead = true;
 		}
+
+		currentElement = true;
+		/** Start */
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-
-		if (currentElement) {
-			currentValue = new String(ch, start, length);
-			currentElement = false;
+		if (this.doRead) {
+			if (currentElement) {
+				currentValue = new String(ch, start, length);
+				currentElement = false;
+			}
 		}
-
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		if (this.isStart) {
+		if (this.doRead) {
 			currentElement = false;
 
-			/** set value */
-			if(localName.equalsIgnoreCase("item")){
-				this.isStart = false;
-			}else if (localName.equalsIgnoreCase("title")) {
-				System.out.println("title: "+currentValue);
+			if (localName.equalsIgnoreCase("title")) {
+				System.out.println("title: " + currentValue);
 			} else if (localName.equalsIgnoreCase("link")) {
-				System.out.println("link: "+currentValue);
+				System.out.println("link: " + currentValue);
 			} else if (localName.equalsIgnoreCase("pubDate")) {
-				System.out.println("pubDate: "+currentValue);
+				System.out.println("pubDate: " + currentValue);
 			} else if (localName.equalsIgnoreCase("description")) {
-				System.out.println("Description: "+currentValue);
+				System.out.println("Description: " + currentValue +"\n");
 			}
 		}
+
 	}
 
 	@Override
