@@ -1,9 +1,8 @@
 package servicioImgRSS;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLNoticiasHandler extends DefaultHandler {
@@ -12,38 +11,13 @@ public class XMLNoticiasHandler extends DefaultHandler {
 	boolean currentElement = false;
 	String currentValue = null;
 	private StringBuilder sb;
-	
-	//Not used yet
+
+	// Not used yet
 	private String result = "";
+	private Attributes atributes;
 
 	public XMLNoticiasHandler() {
 		this.result = "";
-	}
-
-	// Dem�s metodos del Parser SAX
-	private String parsearNombre(String fullName) {
-		String parsedName = "";
-		switch (fullName) {
-		case "item":
-			parsedName = "articulo";
-			break;
-		case "title":
-			parsedName = "titulo";
-			break;
-		case "description":
-			parsedName = "descripcion";
-			break;
-		case "category":
-			parsedName = "categoria";
-			break;
-		case "pubDate":
-			parsedName = "fecha";
-			break;
-		default:
-			parsedName = "";
-		}
-		return parsedName;
-
 	}
 
 	public void startElement(String nameSpace, String localName,
@@ -55,32 +29,71 @@ public class XMLNoticiasHandler extends DefaultHandler {
 
 		currentElement = true;
 		this.sb = new StringBuilder();
+		this.atributes = atrs;
+
+		if (this.doRead) {
+			if (localName.equalsIgnoreCase("title")) {
+				this.result += ("<articulo>");
+				this.result += ("<titulo>");
+			} else if (localName.equalsIgnoreCase("description")) {
+				this.result += ("<descripcion>");
+			} else if (localName.equalsIgnoreCase("pubDate")) {
+				this.result += ("<fecha>");
+
+			} else if (localName.equalsIgnoreCase("category")) {
+				this.result += ("<categoria>");
+			}
+		}
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (this.doRead) {
-				sb.append(new String(ch, start, length));
+			sb.append(new String(ch, start, length));
 		}
 	}
-
+	
+	private String replaceLast(String text, String regex, String replacement) {
+        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+    }
+	
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
 		if (this.doRead) {
 			currentElement = false;
-
-			if (localName.equalsIgnoreCase("title")) {
-				System.out.println("title: " + sb.toString());
-			} else if (localName.equalsIgnoreCase("link")) {
-				System.out.println("link: " + sb.toString());
+			
+			if (localName.equalsIgnoreCase("guid")) {
+				result = this.replaceLast(result, "<articulo>", "<articulo id=\""+sb.toString()+"\">");
+			}else if (localName.equalsIgnoreCase("title")) {
+				StringBuilder salida = new StringBuilder();
+				salida.append( "<![CDATA[");
+				salida.append(sb.toString());
+				salida.append("]]></titulo>\n");;
+				result += salida.toString();
+			} else if (localName.equalsIgnoreCase("category")) {
+				StringBuilder salida = new StringBuilder();
+				salida.append( "<![CDATA[");
+				salida.append(sb.toString());
+				salida.append("]]></categoria>\n");;
+				result += salida.toString();
 			} else if (localName.equalsIgnoreCase("pubDate")) {
-				System.out.println("pubDate: " + sb.toString());
+				StringBuilder salida = new StringBuilder();
+				salida.append( "<![CDATA[");
+				salida.append(sb.toString());
+				salida.append("]]></fecha>\n");;
+				result += salida.toString();
 			} else if (localName.equalsIgnoreCase("description")) {
-				System.out.println("Description: " + sb.toString() +"\n");
+				StringBuilder salida = new StringBuilder();
+				salida.append( "<![CDATA[");
+				salida.append(sb.toString());
+				salida.append("]]></descripcion></articulo>\n");
+				result += salida.toString();
+				this.doRead = false;
 			}
+
 		}
 
 	}
