@@ -22,10 +22,6 @@ public class GestorNoticias {
 	public String getNoticiasXML(String sCodCat) throws Exception {
 		XMLNoticiasHandler nhXML = null;
 
-		// JSONNoticiasHandler nhJSON = null;
-
-		// Enacabezado del XML de salida
-
 		// Crear Parser SAX
 		SAXParserFactory factoria = SAXParserFactory.newInstance();
 		factoria.setNamespaceAware(true);
@@ -49,7 +45,6 @@ public class GestorNoticias {
 			result += "</noticias>";
 		}
 
-		// Cierre del XML de salida
 
 		return result;
 	}
