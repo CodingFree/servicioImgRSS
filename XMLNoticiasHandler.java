@@ -8,9 +8,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLNoticiasHandler extends DefaultHandler {
 
-	boolean doRead = false;
-	boolean currentElement = false;
-	String currentValue = null;
+	private boolean doRead = false;
+	private boolean currentElement = false;
+	private String currentValue = null;
 	private StringBuilder sb;
 	
 	private String titulo = "";

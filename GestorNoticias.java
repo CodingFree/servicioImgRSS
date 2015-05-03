@@ -47,7 +47,6 @@ public class GestorNoticias {
 			// // Práctica 4
 			// }
 			result += "</noticias>";
-			System.out.println(result);
 		}
 
 		// Cierre del XML de salida
