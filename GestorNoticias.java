@@ -58,8 +58,8 @@ public class GestorNoticias {
 		return "";
 	}
 
-	public static void main(String[] args) { 
-		 if (args.length == 0) {
+	public static void main(String[] args) {
+		if (args.length == 0) {
 			System.out.println("Falta el codigo de categoria...");
 			System.exit(0);
 		}
@@ -70,14 +70,18 @@ public class GestorNoticias {
 		PrintStream flujoSalida;
 
 		try {
-			String nombreFichero = String.valueOf(System.currentTimeMillis() / 1000L)+".xml";
-			ficheroSalida = new FileOutputStream(nombreFichero);
-			flujoSalida = new PrintStream(ficheroSalida);
-
 			String XML_Transformado = gn.getNoticiasXML(args[0]);
 
-			flujoSalida.println(XML_Transformado);
-			flujoSalida.close();
+			if (XML_Transformado != "") {
+				String nombreFichero = String.valueOf(System
+						.currentTimeMillis() / 1000L) + ".xml";
+				ficheroSalida = new FileOutputStream(nombreFichero);
+				flujoSalida = new PrintStream(ficheroSalida);
+
+				flujoSalida.println(XML_Transformado);
+				
+				flujoSalida.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Error writing to file");
