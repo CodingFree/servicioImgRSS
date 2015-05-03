@@ -34,7 +34,7 @@ public class GestorNoticias {
 		// Recorre la lista de servicios WEB que ofrecen noticias de la
 		// categoría pasada como parámetro
 		for (InfoServicioWeb iw : gc.getInfoCategoria(sCodCat)) {
-			this.result = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<noticias>";
+			this.result = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<noticias xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation='noticias.xsd'>";
 
 			if (iw.getType().equals("XML")) // Solo los servicios XML
 			{

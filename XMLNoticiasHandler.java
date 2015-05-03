@@ -5,16 +5,21 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+
 public class XMLNoticiasHandler extends DefaultHandler {
 
 	boolean doRead = false;
 	boolean currentElement = false;
 	String currentValue = null;
 	private StringBuilder sb;
+	
+	private String titulo = "";
+	private String descripcion = "";
+	private String fecha = "";
+	private String categoria = "";
 
 	// Not used yet
 	private String result = "";
-	private Attributes atributes;
 
 	public XMLNoticiasHandler() {
 		this.result = "";
@@ -24,24 +29,30 @@ public class XMLNoticiasHandler extends DefaultHandler {
 			String fullName, Attributes atrs) {
 
 		if (localName.equalsIgnoreCase("item")) {
+			this.result += this.titulo + this.descripcion + this.fecha + this.categoria;
+			
 			this.doRead = true;
+			this.titulo ="";
+			this.descripcion = "";
+			this.categoria = "";
+			this.fecha = "";
 		}
-
+		
+		
 		currentElement = true;
 		this.sb = new StringBuilder();
-		this.atributes = atrs;
+		
 
 		if (this.doRead) {
 			if (localName.equalsIgnoreCase("title")) {
-				this.result += ("<articulo>");
-				this.result += ("<titulo>");
+				this.titulo += "<articulo>";
+				this.titulo += ("<titulo>");
 			} else if (localName.equalsIgnoreCase("description")) {
-				this.result += ("<descripcion>");
+				this.descripcion += ("<descripcion>");
 			} else if (localName.equalsIgnoreCase("pubDate")) {
-				this.result += ("<fecha>");
-
+				this.fecha += ("<fecha>");
 			} else if (localName.equalsIgnoreCase("category")) {
-				this.result += ("<categoria>");
+				this.categoria += ("<categoria>");
 			}
 		}
 	}
@@ -54,10 +65,6 @@ public class XMLNoticiasHandler extends DefaultHandler {
 		}
 	}
 	
-	private String replaceLast(String text, String regex, String replacement) {
-        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
-    }
-	
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
@@ -66,31 +73,25 @@ public class XMLNoticiasHandler extends DefaultHandler {
 			currentElement = false;
 			
 			if (localName.equalsIgnoreCase("guid")) {
-				result = this.replaceLast(result, "<articulo>", "<articulo id=\""+sb.toString()+"\">");
+				this.titulo = this.titulo.replaceAll("<articulo>", "<articulo id=\""+sb.toString()+"\">");
 			}else if (localName.equalsIgnoreCase("title")) {
-				StringBuilder salida = new StringBuilder();
-				salida.append( "<![CDATA[");
-				salida.append(sb.toString());
-				salida.append("]]></titulo>\n");;
-				result += salida.toString();
+				this.titulo += "<![CDATA[";
+				this.titulo += sb.toString();
+				this.titulo += "]]></titulo>";
 			} else if (localName.equalsIgnoreCase("category")) {
-				StringBuilder salida = new StringBuilder();
-				salida.append( "<![CDATA[");
-				salida.append(sb.toString());
-				salida.append("]]></categoria>\n");;
-				result += salida.toString();
+				this.categoria += "<![CDATA[";
+				this.categoria += sb.toString();
+				this.categoria += "]]></categoria>";
+				this.categoria += "</articulo>";
 			} else if (localName.equalsIgnoreCase("pubDate")) {
-				StringBuilder salida = new StringBuilder();
-				salida.append( "<![CDATA[");
-				salida.append(sb.toString());
-				salida.append("]]></fecha>\n");;
-				result += salida.toString();
+				this.fecha += "<![CDATA[";
+				this.fecha += sb.toString();
+				this.fecha += "]]></fecha>";
 			} else if (localName.equalsIgnoreCase("description")) {
-				StringBuilder salida = new StringBuilder();
-				salida.append( "<![CDATA[");
-				salida.append(sb.toString());
-				salida.append("]]></descripcion></articulo>\n");
-				result += salida.toString();
+				this.descripcion += "<![CDATA[";
+				this.descripcion += sb.toString();
+				this.descripcion += "]]></descripcion>";
+
 				this.doRead = false;
 			}
 
