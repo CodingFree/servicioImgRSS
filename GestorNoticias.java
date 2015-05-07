@@ -35,7 +35,6 @@ public class GestorNoticias {
 
 			if (iw.getType().equals("XML")) // Solo los servicios XML
 			{
-				System.out.println(iw.getURL());
 				nhXML = new XMLNoticiasHandler();
 				parser.parse(iw.getURL(), nhXML);
 				result += nhXML.getResult();
