@@ -27,24 +27,25 @@ public class GestorNoticias {
 		factoria.setNamespaceAware(true);
 		SAXParser parser = factoria.newSAXParser();
 
+		this.result = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<noticias xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation='noticias.xsd'>";
+
 		// Recorre la lista de servicios WEB que ofrecen noticias de la
-		// categorÌa pasada como par·metro
+		// categor√≠a pasada como par√°metro
 		for (InfoServicioWeb iw : gc.getInfoCategoria(sCodCat)) {
-			this.result = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<noticias xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation='noticias.xsd'>";
 
 			if (iw.getType().equals("XML")) // Solo los servicios XML
 			{
+				System.out.println(iw.getURL());
 				nhXML = new XMLNoticiasHandler();
 				parser.parse(iw.getURL(), nhXML);
 				result += nhXML.getResult();
 			}
 			// } else // Suponemos que es JSON
 			// {
-			// // Pr·ctica 4
+			// // Pr√°ctica 4
 			// }
-			result += "</noticias>";
 		}
-
+		result += "</noticias>";
 
 		return result;
 	}
