@@ -25,7 +25,7 @@ public class GestorCategorias {
 	public GestorCategorias(String sFile) {
 		cats = new ArrayList<InfoServicioWeb>();
 
-		/** Configuración de lectura **/
+		/** ConfiguraciÃ³n de lectura **/
 		Path configuracion = Paths.get(sFile);
 		Charset charset = Charset.forName("ISO-8859-1");
 
@@ -42,7 +42,7 @@ public class GestorCategorias {
 
 			for (String line : lines) {
 				// Cada vez que se encuentran los corchetes, se crea una
-				// categoría.
+				// categorÃ­a.
 				Matcher matcherCat = patronCat.matcher(line);
 				if (matcherCat.find()) {
 					if (validarServicio(servicio)) {
@@ -54,11 +54,11 @@ public class GestorCategorias {
 					// Preparamos un nuevo servicio.
 					servicio = new InfoServicioWeb();
 				} else {
-					// Debería ser más sencillo dado que sabemos que el campo
+					// DeberÃ­a ser mÃ¡s sencillo dado que sabemos que el campo
 					// existe.
-					// Lo que quiero decir es que no debería hacer falta ninguna
-					// comprobación en este punto.
-					// Quizás una manera de resolverlo sería usando reflection.
+					// Lo que quiero decir es que no deberÃ­a hacer falta ninguna
+					// comprobaciÃ³n en este punto.
+					// QuizÃ¡s una manera de resolverlo serÃ­a usando reflection.
 					Matcher matcher = pattern.matcher(line);
 					if (matcher.find()) {
 						// Quitamos espacios, por si acaso.
@@ -78,7 +78,7 @@ public class GestorCategorias {
 			}
 
 			if (!cats.contains(servicio)) {
-				// Por si queda un último servicio sin agregar.
+				// Por si queda un Ãºltimo servicio sin agregar.
 				if (validarServicio(servicio)) {
 					cats.add(servicio);
 				}
@@ -97,9 +97,9 @@ public class GestorCategorias {
 	 * 
 	 */
 	public List<InfoServicioWeb> getInfoCategoria(String sCodCategoria) {
-		//Si quisiesemos recorrer un subconjunto de categorías podría ser así:
+		//Si quisiesemos recorrer un subconjunto de categorÃ­as podrÃ­a ser asÃ­:
 		//"^"+sCodCategoria+".*$"
-		Pattern patronCat = Pattern.compile("^"+sCodCategoria+"$", Pattern.CASE_INSENSITIVE );
+		Pattern patronCat = Pattern.compile("^"+sCodCategoria+".*$", Pattern.CASE_INSENSITIVE );
 		
 		List<InfoServicioWeb> lista = new ArrayList<InfoServicioWeb>();
 		Iterator<InfoServicioWeb> iterator = this.cats.iterator();
