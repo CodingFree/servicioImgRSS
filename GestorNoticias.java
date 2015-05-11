@@ -2,9 +2,6 @@ package servicioImgRSS;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -21,7 +18,8 @@ public class GestorNoticias {
 
 	public String getNoticiasXML(String sCodCat) throws Exception {
 		XMLNoticiasHandler nhXML = null;
-
+		JSONNoticiasHandler nhJSON = null;
+		
 		// Crear Parser SAX
 		SAXParserFactory factoria = SAXParserFactory.newInstance();
 		factoria.setNamespaceAware(true);
@@ -39,7 +37,8 @@ public class GestorNoticias {
 				parser.parse(iw.getURL(), nhXML);
 				result += nhXML.getResult();
 			} else if(iw.getType().equalsIgnoreCase("JSON")){ // Suponemos que es JSON
-				
+				nhJSON = new JSONNoticiasHandler(iw.getURL());
+				result += nhJSON.getResult();
 			}
 		}
 		result += "</noticias>";
@@ -69,9 +68,9 @@ public class GestorNoticias {
 				String nombreFichero = String.valueOf(System
 						.currentTimeMillis() / 1000L) + ".xml";
 				ficheroSalida = new FileOutputStream(nombreFichero);
-				flujoSalida = new PrintStream(ficheroSalida);
+				flujoSalida  = new PrintStream(ficheroSalida);
 
-				flujoSalida.println(XML_Transformado);
+				flujoSalida .println(XML_Transformado);
 				
 				flujoSalida.close();
 			}
