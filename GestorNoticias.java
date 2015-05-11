@@ -70,8 +70,8 @@ public class GestorNoticias {
 				ficheroSalida = new FileOutputStream(nombreFichero);
 				flujoSalida  = new PrintStream(ficheroSalida);
 
-				flujoSalida .println(XML_Transformado);
-				
+				flujoSalida.println(XML_Transformado);
+
 				flujoSalida.close();
 			}
 		} catch (Exception e) {
