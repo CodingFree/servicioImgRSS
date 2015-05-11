@@ -68,7 +68,7 @@ public class GestorNoticias {
 				String nombreFichero = String.valueOf(System
 						.currentTimeMillis() / 1000L) + ".xml";
 				ficheroSalida = new FileOutputStream(nombreFichero);
-				flujoSalida  = new PrintStream(ficheroSalida);
+				flujoSalida = new PrintStream(ficheroSalida);
 
 				flujoSalida.println(XML_Transformado);
 

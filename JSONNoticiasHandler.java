@@ -44,7 +44,6 @@ public class JSONNoticiasHandler {
 					} else {
 						result += "<categoria/></articulo>";
 					}
-					result += "\n";
 				}
 			}
 		} catch (Exception e) {
