@@ -33,16 +33,14 @@ public class GestorNoticias {
 		// categoría pasada como parámetro
 		for (InfoServicioWeb iw : gc.getInfoCategoria(sCodCat)) {
 
-			if (iw.getType().equals("XML")) // Solo los servicios XML
+			if (iw.getType().equalsIgnoreCase("XML")) // Solo los servicios XML
 			{
 				nhXML = new XMLNoticiasHandler();
 				parser.parse(iw.getURL(), nhXML);
 				result += nhXML.getResult();
+			} else if(iw.getType().equalsIgnoreCase("JSON")){ // Suponemos que es JSON
+				
 			}
-			// } else // Suponemos que es JSON
-			// {
-			// // Práctica 4
-			// }
 		}
 		result += "</noticias>";
 
