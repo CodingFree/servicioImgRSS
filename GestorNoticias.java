@@ -66,12 +66,12 @@ public class GestorNoticias {
 			if (XML_Transformado != "") {
 				String nombreFichero = String.valueOf(System
 						.currentTimeMillis() / 1000L) + ".xml";
-				ficheroSalida = new FileOutputStream(nombreFichero);
-				flujoSalida = new PrintStream(ficheroSalida);
+				//ficheroSalida = new FileOutputStream(nombreFichero);
+				// = new PrintStream(ficheroSalida);
 
-				flujoSalida.println(XML_Transformado);
+				//.println(XML_Transformado);
 				
-				flujoSalida.close();
+				//flujoSalida.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
