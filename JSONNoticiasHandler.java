@@ -24,22 +24,27 @@ public class JSONNoticiasHandler {
 	 */
 	public JSONNoticiasHandler(String sURL) {
 		try {
-			Reader reader = new InputStreamReader(new URL(sURL).openStream(),  "UTF-8");
+			Reader reader = new InputStreamReader(new URL(sURL).openStream(),
+					"UTF-8");
 			if (reader.ready()) {
 				Gson gson = new GsonBuilder().create();
 				Response obj = gson.fromJson(reader, Response.class);
-			    for (int i = 0; i < obj.responseData.feed.entries.size(); i++) {
-			    	Entry entrada = obj.responseData.feed.entries.get(i);
-			    	result += "<articulo id=\""+entrada.link+"\"><titulo><![CDATA["+entrada.title+"]]></titulo>";
-			    	result += "<descripcion><![CDATA["+entrada.contentSnippet+"]]></descripcion>";
-			    	result += "<fecha><![CDATA["+entrada.publishedDate+"]]></fecha>";
-			    	if(entrada.category != null){
-			    		result += "<categoria><![CDATA["+entrada.category+"]]></cateoria>";
-			    	}else{
-			    		result += "<categoria/></articulo>";
-			    	}
-			    	result += "\n";
-			    }
+				for (int i = 0; i < obj.responseData.feed.entries.size(); i++) {
+					Entry entrada = obj.responseData.feed.entries.get(i);
+					result += "<articulo id=\"" + entrada.link
+							+ "\"><titulo><![CDATA[" + entrada.title
+							+ "]]></titulo>";
+					result += "<descripcion><![CDATA[" + entrada.contentSnippet
+							+ "]]></descripcion>";
+					result += "<fecha><![CDATA[" + entrada.publishedDate
+							+ "]]></fecha>";
+					if (entrada.category != null) {
+						result += "<categoria><![CDATA[" + entrada.category
+								+ "]]></cateoria>";
+					} else {
+						result += "<categoria/></articulo>";
+					}
+				}
 			}
 		} catch (Exception e) {
 			System.err.println(e);
@@ -56,22 +61,21 @@ public class JSONNoticiasHandler {
 	private class responseData { // This is the inner array class
 		private Feed feed;
 	}
-	
-	private class Feed{
+
+	private class Feed {
 		private String title;
-		private List<Entry> entries;		
+		private List<Entry> entries;
 	}
-	
-	private class Entry{
+
+	private class Entry {
 		private String title;
 		private String publishedDate;
 		private String contentSnippet;
 		private String link; // Guid?
 		private String category;
-		
-		
+
 	}
-	
+
 	public String getResult() {
 		return result.toString();
 	}
