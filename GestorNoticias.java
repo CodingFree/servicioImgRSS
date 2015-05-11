@@ -38,6 +38,7 @@ public class GestorNoticias {
 				result += nhXML.getResult();
 			} else if(iw.getType().equalsIgnoreCase("JSON")){ // Suponemos que es JSON
 				nhJSON = new JSONNoticiasHandler(iw.getURL());
+				result += nhJSON.getResult();
 			}
 		}
 		result += "</noticias>";
@@ -66,12 +67,12 @@ public class GestorNoticias {
 			if (XML_Transformado != "") {
 				String nombreFichero = String.valueOf(System
 						.currentTimeMillis() / 1000L) + ".xml";
-				//ficheroSalida = new FileOutputStream(nombreFichero);
-				// = new PrintStream(ficheroSalida);
+				ficheroSalida = new FileOutputStream(nombreFichero);
+				flujoSalida  = new PrintStream(ficheroSalida);
 
-				//.println(XML_Transformado);
+				flujoSalida .println(XML_Transformado);
 				
-				//flujoSalida.close();
+				flujoSalida.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

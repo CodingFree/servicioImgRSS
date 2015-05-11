@@ -29,7 +29,16 @@ public class JSONNoticiasHandler {
 				Gson gson = new GsonBuilder().create();
 				Response obj = gson.fromJson(reader, Response.class);
 			    for (int i = 0; i < obj.responseData.feed.entries.size(); i++) {
-				System.out.println(obj.responseData.feed.entries.get(i).title);
+			    	Entry entrada = obj.responseData.feed.entries.get(i);
+			    	result += "<articulo id=\""+entrada.link+"\"><titulo><![CDATA["+entrada.title+"]]></titulo>";
+			    	result += "<descripcion><![CDATA["+entrada.contentSnippet+"]]></descripcion>";
+			    	result += "<fecha><![CDATA["+entrada.publishedDate+"]]></fecha>";
+			    	if(entrada.category != null){
+			    		result += "<categoria><![CDATA["+entrada.category+"]]></cateoria>";
+			    	}else{
+			    		result += "<categoria/></articulo>";
+			    	}
+			    	result += "\n";
 			    }
 			}
 		} catch (Exception e) {
@@ -42,12 +51,6 @@ public class JSONNoticiasHandler {
 		private String responseDetails = null;
 		private int responseStatus;
 		private responseData responseData;
-		//private List<Item> item; // This is for the inner array
-
-		@Override
-		public String toString() {
-			return responseData + " - " + responseStatus + " (" + responseDetails + ")";
-		}
 	}
 
 	private class responseData { // This is the inner array class
@@ -64,9 +67,12 @@ public class JSONNoticiasHandler {
 		private String publishedDate;
 		private String contentSnippet;
 		private String link; // Guid?
-		//private String category;
+		private String category;
 		
 		
 	}
-
+	
+	public String getResult() {
+		return result.toString();
+	}
 }
