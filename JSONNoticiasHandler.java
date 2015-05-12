@@ -6,6 +6,7 @@ package servicioImgRSS;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -38,8 +39,8 @@ public class JSONNoticiasHandler {
 							+ "]]></descripcion>";
 					result += "<fecha><![CDATA[" + entrada.publishedDate
 							+ "]]></fecha>";
-					if (entrada.category != null) {
-						result += "<categoria><![CDATA[" + entrada.category
+					if (!entrada.categories.isEmpty()) {
+						result += "<categoria><![CDATA[" + entrada.categories.get(0)
 								+ "]]></cateoria>";
 					} else {
 						result += "<categoria/></articulo>";
@@ -51,14 +52,13 @@ public class JSONNoticiasHandler {
 		}
 	}
 
-	private class Response { // This class should match your json object
-								// structure
+	private class Response {
 		private String responseDetails = null;
 		private int responseStatus;
 		private responseData responseData;
 	}
 
-	private class responseData { // This is the inner array class
+	private class responseData {
 		private Feed feed;
 	}
 
@@ -72,7 +72,7 @@ public class JSONNoticiasHandler {
 		private String publishedDate;
 		private String contentSnippet;
 		private String link; // Guid?
-		private String category;
+		private ArrayList<String> categories;
 
 	}
 

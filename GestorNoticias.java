@@ -46,10 +46,6 @@ public class GestorNoticias {
 		return result;
 	}
 
-	public String getNoticiasHTML() {
-		return "";
-	}
-
 	public static void main(String[] args) {
 		if (args.length == 0) {
 			System.out.println("Falta el codigo de categoria...");
