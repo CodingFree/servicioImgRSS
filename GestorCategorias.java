@@ -1,126 +1,105 @@
 package servicioImgRSS;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
+import java.io.IOException;
 
-import servicioImgRSS.InfoServicioWeb;
+import org.w3c.dom.*;
+
+import javax.xml.parsers.*;
 
 public class GestorCategorias {
-	private ArrayList<InfoServicioWeb> cats;
 
-	/**
-	 *
-	 * @param sFile
-	 *            path al fichero <i>.ini</i> con informaci?n sobre los
-	 *            servicios web asociados a cada categor?a.
-	 */
-	public GestorCategorias(String sFile) {
-		cats = new ArrayList<InfoServicioWeb>();
+	//Constante, para evitar erratas en alg�n string de los ficheros.
+	private final static String nombreFichero = "serviciosRSS.xml";
+	public ArrayList<InfoServicioWeb> lServicios = new ArrayList<InfoServicioWeb>();
 
-		/** Configuración de lectura **/
-		Path configuracion = Paths.get(sFile);
-		Charset charset = Charset.forName("ISO-8859-1");
-
-		/** Patrones de busqueda, precompilados **/
-		Pattern patronCat = Pattern.compile("^\\[.*\\]$");
-		Pattern pattern = Pattern.compile("^(codCat|nombre|url|tipo):(.*)");
+	// ---------
+	// Primera parte de la pr�ctica 5
+	// ---------
+	public GestorCategorias(String sFile /* fichero de configuracion XML */) {
+		Document docServicios = null;
+		DocumentBuilderFactory factoria = DocumentBuilderFactory.newInstance();
+		factoria.setNamespaceAware(true);
 
 		try {
-			List<String> lines = Files.readAllLines(configuracion, charset);
-			if (lines.size() == 0) {
-				throw new NullPointerException();
-			}
-			InfoServicioWeb servicio = new InfoServicioWeb();
+			DocumentBuilder builder = factoria.newDocumentBuilder();
+			// Iniciamos el parseo
+			docServicios = builder.parse(sFile);
+			
+			// Seleccionamos ra�z y nodos.
+			Element raiz = docServicios.getDocumentElement();
+			NodeList nodosHijo = (NodeList) raiz
+					.getElementsByTagName("servicio");
 
-			for (String line : lines) {
-				// Cada vez que se encuentran los corchetes, se crea una
-				// categoría.
-				Matcher matcherCat = patronCat.matcher(line);
-				if (matcherCat.find()) {
-					if (validarServicio(servicio)) {
-						// Se agrega la anterior siempre y cuando no sea la
-						// inicial (que estaria vacia).
-						cats.add(servicio);
-					}
+			for (int i = 0; i < nodosHijo.getLength(); i++) {
+				//Analizamos los nodos.
+				Element current = (Element) nodosHijo.item(i);
+				String direccion = current.getElementsByTagName("url").item(0)
+						.getTextContent();
+				String codigoCategoria = current.getElementsByTagName("codCat")
+						.item(0).getTextContent();
+				
+				// Creamos un infoServicioWeb.
+				InfoServicioWeb nuevoServ = new InfoServicioWeb("", direccion,
+						current.getAttribute("tipo"));
+				nuevoServ.addCat(codigoCategoria);
 
-					// Preparamos un nuevo servicio.
-					servicio = new InfoServicioWeb();
-				} else {
-					// Debería ser más sencillo dado que sabemos que el campo
-					// existe.
-					// Lo que quiero decir es que no debería hacer falta ninguna
-					// comprobación en este punto.
-					// Quizás una manera de resolverlo sería usando reflection.
-					Matcher matcher = pattern.matcher(line);
-					if (matcher.find()) {
-						// Quitamos espacios, por si acaso.
-						String campo = matcher.group(1).trim();
-						String valor = matcher.group(2).trim();
-						if (new String("codCat").equals(campo)) {
-							servicio.addCat(valor);
-						} else if (new String("nombre").equals(campo)) {
-							servicio.setNombreServicioWeb(valor);
-						} else if (new String("url").equals(campo)) {
-							servicio.setURL(valor);
-						} else if (new String("tipo").equals(campo)) {
-							servicio.setType(valor);
-						}
-					}
-				}
+				// Se agrega a la lista de servicios web.
+				this.lServicios.add(nuevoServ);
 			}
 
-			if (!cats.contains(servicio)) {
-				// Por si queda un último servicio sin agregar.
-				if (validarServicio(servicio)) {
-					cats.add(servicio);
-				}
-			}
-		} catch (IOException | IllegalArgumentException e) {
-			System.out.println(e);
+		} catch (IOException e) {
+			System.err.println("Error: no existe el fichero "+nombreFichero+". ");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
 	}
 
-	/**
-	 *
-	 * @param sCodCategoria
-	 * @return informacion de los servicios web asociados directamente a
-	 *         <i>sCodCategoria</i> y a sus subcategor?as. No devolver?
-	 *         informaci?n repetida.
-	 * 
-	 */
 	public List<InfoServicioWeb> getInfoCategoria(String sCodCategoria) {
-		//Si quisiesemos recorrer un subconjunto de categorías podría ser así:
-		//"^"+sCodCategoria+".*$"
-		Pattern patronCat = Pattern.compile("^"+sCodCategoria+".*$", Pattern.CASE_INSENSITIVE );
-		
-		List<InfoServicioWeb> lista = new ArrayList<InfoServicioWeb>();
-		Iterator<InfoServicioWeb> iterator = this.cats.iterator();
-		
-		while (iterator.hasNext()) {
-			InfoServicioWeb categoria = iterator.next();
-			String codigo = categoria.getCat(0).trim();
-			Matcher matcher = patronCat.matcher(codigo);
-			boolean encontrado = matcher.find();
-			if (encontrado) {
-				lista.add(categoria);
-			}
 
-		}
-		return lista;
+		ArrayList<InfoServicioWeb> listaCategoria = new ArrayList<InfoServicioWeb>();
+
+		for (InfoServicioWeb iw : lServicios) {
+
+			// System.out.println( "URL: " + iw.getURL() );
+
+			int nCats = iw.getNumCats();
+
+			boolean found = false;
+			int i = 0;
+			while ((i < nCats) && !found) {
+				String cat = iw.getCat(i);
+				if (cat.equals(sCodCategoria)) {
+					listaCategoria.add(iw);
+					found = true;
+				}
+
+				i++;
+			} // while
+		} // for
+
+		return listaCategoria;
 	}
 
-	private boolean validarServicio(InfoServicioWeb servicio) {
-		if (servicio.getNombreServicioWeb() != "") {
-			return true;
+	// ------------------------------------------------------
+	// Programa principal de prueba de la clase
+	//
+
+	public static void main(String[] args) {
+		if (args.length == 0) {
+			System.out.println("Usage: GestorCategorias <codigo categoria>");
+			System.exit(0);
 		}
-		return false;
+
+		GestorCategorias gc = new GestorCategorias(nombreFichero);
+		List<InfoServicioWeb> lista = gc.getInfoCategoria(args[0]);
+
+		for (InfoServicioWeb iw : lista) {
+			System.out.println("(" + iw.getType() + ") URL: " + iw.getURL());
+		}
 	}
-}
+
+} // class

@@ -3,12 +3,13 @@ package servicioImgRSS;
 import java.util.ArrayList;
 
 public class InfoServicioWeb {
-	private String categoria;
+	private ArrayList<String> cats; 
 	private String nombreServicioWeb;
 	private String urlServicioWeb;
 	private String tipoServicioWeb;
 
 	public InfoServicioWeb() {
+		cats = new ArrayList<String>();
 		nombreServicioWeb = "";
 		urlServicioWeb = "";
 		tipoServicioWeb = "";
@@ -16,6 +17,7 @@ public class InfoServicioWeb {
 
 
 	public InfoServicioWeb(String nombreServicioWeb, String urlServicioWeb, String tipoServicioWeb) {
+		cats = new ArrayList<String>();
 		this.nombreServicioWeb=nombreServicioWeb;
 		this.urlServicioWeb=urlServicioWeb;
 		this.tipoServicioWeb=tipoServicioWeb;
@@ -23,16 +25,16 @@ public class InfoServicioWeb {
 
 
 	public int getNumCats(){
-		return 0;
+		return cats.size();
 	}
 	
 	public String getCat(int i) {
-		return this.categoria;
+		return cats.get(i);
 	}
 
 
 	public void addCat(String categoria) {
-		this.categoria = categoria;
+		cats.add(categoria);
 	}
 
 

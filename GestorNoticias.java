@@ -52,7 +52,7 @@ public class GestorNoticias {
 			System.exit(0);
 		}
 
-		GestorNoticias gn = new GestorNoticias("categorias.ini");
+		GestorNoticias gn = new GestorNoticias("categorias.xml");
 
 		FileOutputStream ficheroSalida;
 		PrintStream flujoSalida;
