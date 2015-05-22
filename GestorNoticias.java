@@ -1,4 +1,4 @@
-package servicioImgRSS;
+package piat.servicioImgRSS;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;

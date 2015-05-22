@@ -1,7 +1,7 @@
 /**
  * 
  */
-package servicioImgRSS;
+package piat.servicioImgRSS;
 
 import java.io.InputStreamReader;
 import java.io.Reader;

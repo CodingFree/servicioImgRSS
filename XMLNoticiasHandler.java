@@ -1,4 +1,4 @@
-package servicioImgRSS;
+package piat.servicioImgRSS;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
