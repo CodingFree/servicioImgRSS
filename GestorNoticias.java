@@ -1,10 +1,14 @@
 package piat.servicioImgRSS;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.io.StringWriter;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.*;
 
 public class GestorNoticias {
 
@@ -19,7 +23,7 @@ public class GestorNoticias {
 	public String getNoticiasXML(String sCodCat) throws Exception {
 		XMLNoticiasHandler nhXML = null;
 		JSONNoticiasHandler nhJSON = null;
-		
+
 		// Crear Parser SAX
 		SAXParserFactory factoria = SAXParserFactory.newInstance();
 		factoria.setNamespaceAware(true);
@@ -36,7 +40,8 @@ public class GestorNoticias {
 				nhXML = new XMLNoticiasHandler();
 				parser.parse(iw.getURL(), nhXML);
 				result += nhXML.getResult();
-			} else if(iw.getType().equalsIgnoreCase("JSON")){ // Suponemos que es JSON
+			} else if (iw.getType().equalsIgnoreCase("JSON")) { // Suponemos que
+																// es JSON
 				nhJSON = new JSONNoticiasHandler(iw.getURL());
 				result += nhJSON.getResult();
 			}
@@ -45,31 +50,74 @@ public class GestorNoticias {
 
 		return result;
 	}
+	
+	public String getNoticiasHTML() {	
+		File fXSL;
+		File XMLT;
+		StreamSource SS;
+		String htmlNoticias;
+		String respuesta = new String();
+		StringWriter writer;
+		Transformer transformer;
+		TransformerFactory tFactory;
+		
+		// Procesar el contenido del fichero XML_Transform.xml generado por getNoticiasXML 
+		// y generar un fichero HTML que se pueda visualizar en el navegador. Para ello
+		// se usará un fichero de transformación XSL y la clase Trasformer
+
+		
+		writer  = new StringWriter();
+		try{
+			tFactory = TransformerFactory.newInstance();
+			fXSL= new File("XMHTML.xsl");
+			SS = new StreamSource(fXSL);
+			transformer = tFactory.newTransformer(SS);
+			
+			XMLT = new File("XML_Transform.xml");
+			transformer.transform(new StreamSource(XMLT), new StreamResult(writer));
+			
+			respuesta = writer.toString();
+		} catch(Exception e){
+			System.err.println("Exception: " +e);
+			respuesta = "HA HABIDO UNA EXCEPCION";
+			
+		}
+		
+		return respuesta;
+					
+	}
 
 	public static void main(String[] args) {
+
 		if (args.length == 0) {
 			System.out.println("Falta el codigo de categoria...");
 			System.exit(0);
 		}
 
-		GestorNoticias gn = new GestorNoticias("categorias.xml");
+		// -------
+		// serviciosRSS.xml contiene la lista de servidores
+		// -------
+		GestorNoticias gn = new GestorNoticias("serviciosRSS.xml");
 
 		FileOutputStream ficheroSalida;
 		PrintStream flujoSalida;
 
 		try {
+			ficheroSalida = new FileOutputStream("XML_transform.xml");
+			flujoSalida = new PrintStream(ficheroSalida);
+
 			String XML_Transformado = gn.getNoticiasXML(args[0]);
 
-			if (XML_Transformado != "") {
-				String nombreFichero = String.valueOf(System
-						.currentTimeMillis() / 1000L) + ".xml";
-				ficheroSalida = new FileOutputStream(nombreFichero);
-				flujoSalida = new PrintStream(ficheroSalida);
+			flujoSalida.println(XML_Transformado);
+			flujoSalida.close();
 
-				flujoSalida.println(XML_Transformado);
+			// Segunda parte de la práctica 5
+			String HTML_Transformado = gn.getNoticiasHTML();
+			ficheroSalida = new FileOutputStream("HTML_transform.html");
+			flujoSalida = new PrintStream(ficheroSalida);
+			flujoSalida.println(HTML_Transformado);
+			flujoSalida.close();
 
-				flujoSalida.close();
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Error writing to file");
