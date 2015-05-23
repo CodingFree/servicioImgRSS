@@ -50,41 +50,42 @@ public class GestorNoticias {
 
 		return result;
 	}
-	
-	public String getNoticiasHTML() {	
+
+	public String getNoticiasHTML() {
 		File fXSL;
 		File XMLT;
 		StreamSource SS;
 		String htmlNoticias;
 		String respuesta = new String();
-		StringWriter writer;
 		Transformer transformer;
 		TransformerFactory tFactory;
-		
-		// Procesar el contenido del fichero XML_Transform.xml generado por getNoticiasXML 
-		// y generar un fichero HTML que se pueda visualizar en el navegador. Para ello
+
+		// Procesar el contenido del fichero XML_Transform.xml generado por
+		// getNoticiasXML
+		// y generar un fichero HTML que se pueda visualizar en el navegador.
+		// Para ello
 		// se usará un fichero de transformación XSL y la clase Trasformer
 
-		
-		writer  = new StringWriter();
-		try{
+		try {
 			tFactory = TransformerFactory.newInstance();
-			fXSL= new File("XMHTML.xsl");
+			fXSL = new File("XMHTML.xsl");
 			SS = new StreamSource(fXSL);
 			transformer = tFactory.newTransformer(SS);
-			
+
+			StringWriter writer = new StringWriter();
 			XMLT = new File("XML_Transform.xml");
-			transformer.transform(new StreamSource(XMLT), new StreamResult(writer));
-			
+			transformer.transform(new StreamSource(XMLT), new StreamResult(
+					writer));
+
 			respuesta = writer.toString();
-		} catch(Exception e){
-			System.err.println("Exception: " +e);
+		} catch (Exception e) {
+			System.err.println("Exception: " + e);
 			respuesta = "HA HABIDO UNA EXCEPCION";
-			
+
 		}
-		
+
 		return respuesta;
-					
+
 	}
 
 	public static void main(String[] args) {
@@ -103,7 +104,10 @@ public class GestorNoticias {
 		PrintStream flujoSalida;
 
 		try {
-			ficheroSalida = new FileOutputStream("XML_transform.xml");
+			String nombreFichero = String
+					.valueOf(System.currentTimeMillis() / 1000L);
+
+			ficheroSalida = new FileOutputStream(nombreFichero+".xml");
 			flujoSalida = new PrintStream(ficheroSalida);
 
 			String XML_Transformado = gn.getNoticiasXML(args[0]);
@@ -113,7 +117,7 @@ public class GestorNoticias {
 
 			// Segunda parte de la práctica 5
 			String HTML_Transformado = gn.getNoticiasHTML();
-			ficheroSalida = new FileOutputStream("HTML_transform.html");
+			ficheroSalida = new FileOutputStream(nombreFichero+".html");
 			flujoSalida = new PrintStream(ficheroSalida);
 			flujoSalida.println(HTML_Transformado);
 			flujoSalida.close();
